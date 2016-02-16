@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Product;
+use Storage;
 
 class ProductController extends Controller
 {
@@ -82,9 +83,20 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    // todo confirmation client after deleted
+    
     public function destroy($id)
     {
-        Product::destroy($id);
+        $p =Product::find($id);
+        if(!is_null($p->picture)){
+            Storage::delete($p->picture->uri);
+            $p->picture->delete();
+        }
+
+        $p->delete();
         return back()->with(['message'=>trans('app.success')]);
+
+
     }
 }
