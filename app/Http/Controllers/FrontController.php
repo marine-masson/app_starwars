@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
 use Mail;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Product;
-use App\Category;
 use App\User;
+use App\Product;
+use App\History;
+use App\Category;
+use App\Cart\Cart;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class FrontController extends Controller
 {
+
     public function index(){
         $products = Product::with('tags','picture','category')->paginate(10);
         return view('front.index',compact('products'));
@@ -51,4 +54,85 @@ class FrontController extends Controller
             'alert' => 'success'
         ]);
     }
+
+    public function storeProduct(Request $request, Cart $cart){
+
+        $this->validate($request, [
+            'quantity' => 'required|numeric',
+            'id' => 'required|integer'
+        ]);
+
+
+        $product = Product::find($request->input('id'));
+
+        $cart->buy($product, $request->input('quantity'));
+
+        return back();
+
+    }
+
+    public function reset(Cart $cart){
+        $cart->reset();
+
+        return;
+    }
+
+    public function restoreProduct($id, Cart $cart){
+        $cart->restore($id);
+
+        return redirect('cart')->with('message', 'product restore');
+    }
+
+    public function showCart(Cart $cart){
+
+
+        $storage = $cart->get();
+
+        $products = [];
+
+        foreach($storage as $id => $s){
+            $p = Product::find($id);
+
+            $products[] = [
+                'id' => $p->id,
+                'name' => $p->title,
+                'price' => $p->price,
+                'total' => $s['total'],
+                'quantity' => $s['quantity']
+            ];
+        }
+
+        $total = $cart->total();
+
+        return view('front.cart', compact('products', 'total'));
+    }
+
+    public function commandCart(Request $request){
+
+        $this->validate($request, [
+            'product_id.*' => 'integer|required',
+            'quantity.*'   => 'integer|required'
+        ]);
+
+        foreach($request->input('product_id') as $productId){
+            $quantity = $request->input('quantity'.$productId);
+            $history = History::create([
+                'product_id' => $productId,
+                'quantity'   => $quantity
+
+            ]);
+
+
+            $stock = $history->product->quantity;
+            if($stock>=$quantity) $history->product->quantity -= $quantity;
+            else $history->product->quantity = 0;
+            $history->product->save();
+
+            return redirect('/')->with('message', 'success command');
+        }
+
+    }
+
 }
+
+

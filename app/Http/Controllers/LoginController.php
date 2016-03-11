@@ -15,6 +15,7 @@ class LoginController extends Controller
 
     public function login(Request $request){
 
+        if(Auth::check()) return redirect()->intended('product');
         if($request->isMethod('post')){
 
            $this->validate($request,[
@@ -28,13 +29,18 @@ class LoginController extends Controller
             $credentials = $request->only('email', 'password');
 
             if(Auth::attempt($credentials, $remember)){
-                return redirect('dashboard')->with(['msg' => "Vous etes connectez"]);
+                return redirect('product')->with(['msg' => "Vous etes connectez"]);
             }else{
                 return back()->withInput($request->only('email','remember'))->with(['msg' => "Mauvais login / password"]);
             }
         }else{
             return view('auth.login');
         }
+    }
+
+    public function logout(){
+        Auth::logout();
+        return redirect('/');
     }
 
 

@@ -22,11 +22,12 @@
         </br>
         <span>En stock : {{$product->quantity}}</span>
 
-        <form action="{{url('prod',[$product->id,$product->slug])}}" method="post">
-            <input class="hidden" type="text" value="{{$product}}">
-            <select name="quantitylist" id="quantity">
+        <form action="{{url('command')}}" method="post">
+            {{csrf_field()}}
+            <input class="hidden" type="text" name="id" value="{{$product->id}}">
+            <select name="quantity" id="quantity">
                 @for($i = 1; $i <= $product->quantity; $i++)
-                    <option value="$i">{{$i}}</option>
+                    <option value="{{$i}}">{{$i}}</option>
                 @endfor
             </select>
             <input type="submit" value="Commander">

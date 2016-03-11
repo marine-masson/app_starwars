@@ -12,10 +12,9 @@
     @include('partials.nav')
     </header>
     <div id="main">
-        <div class="grid-2">
+        <div class="">
             <div class="content">
                 @section('sidebar')
-                    <h1>Best Product</h1>
                 @show
             </div>
             <div class="content">

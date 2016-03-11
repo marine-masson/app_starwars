@@ -4,8 +4,8 @@ PASSWORD=''
 DBNAME='app_starwars'
 HOST='localhost'
 
-USER_USERNAME='eric'
-USER_PASSWORD='eric'
+USER_USERNAME='marine'
+USER_PASSWORD='marine'
 
 MySQL=$(cat <<EOF
 DROP DATABASE IF EXISTS $DBNAME;
@@ -17,6 +17,7 @@ EOF
 
 echo $MySQL | mysql --user=$USERNAME --password=$PASSWORD
 
+ php artisan migrate:refresh --seed
 
 
 

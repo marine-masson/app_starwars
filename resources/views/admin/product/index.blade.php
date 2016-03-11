@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 <div class="">
-    <button><a href="">Create a product</a></button>
+    <button><a href="{{url('product', 'create')}}">Create a product</a></button>
         <table>
             <tr>
                 <th>Status</th>
@@ -19,7 +19,7 @@
                 <td>{{$product->status}}</td>
 
                 <!-- Name -->
-                <td>{{ $product->title }}</td>
+                <td><a href="{{url('product', [$product->id, 'edit'])}}">{{ $product->title }}</a></td>
 
                 <!-- Price -->
                 <td>{{$product->price}}</td>

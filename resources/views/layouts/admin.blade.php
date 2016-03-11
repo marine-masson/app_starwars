@@ -1,3 +1,4 @@
+@include('partials.flash')
 <!doctype html>
 <html lang="en">
 <head>
@@ -12,10 +13,13 @@
     @include('partials.nav')
 </header>
 <div id="main">
-    @yield('content')
+    <div class="">
+        <div class="content">
+            @yield('content')
+        </div>
+    </div>
 </div>
 <footer id="footer">
-
 </footer>
 @yield('scripts')
 </body>
